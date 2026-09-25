@@ -1,4 +1,8 @@
-"""Command-line entry point for the MP1 data pipeline."""
+"""
+Data Processing Pipeline
+
+DS 3500 - MP1
+"""
 
 import argparse
 import logging
@@ -8,16 +12,21 @@ from pathlib import Path
 from data_loaders import load_data
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)-8s %(message)s",
-    datefmt="%H:%M:%S",
-)
 logger = logging.getLogger(__name__)
 
 
-def parse_args():
-    """Parse command-line arguments for the data pipeline."""
+def setup_logging(verbose=False):
+    """Configure logging for the pipeline."""
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        datefmt="%H:%M:%S",
+    )
+
+
+def parse_arguments():
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Load and process a data file.")
     parser.add_argument(
         "--input",
@@ -33,7 +42,7 @@ def parse_args():
     )
     parser.add_argument(
         "--format",
-        choices=["csv", "json", "yaml"],
+        choices=["csv", "json"],
         default="csv",
         help="Output format (default: csv)",
     )
@@ -47,7 +56,7 @@ def parse_args():
 
 
 def validate_input(filepath):
-    """Return True when filepath points to an existing file."""
+    """Check whether the input path exists and is a file."""
     path = Path(filepath)
     if not path.is_file():
         logger.error("Input file not found: %s", filepath)
@@ -58,14 +67,12 @@ def validate_input(filepath):
 
 
 def main():
-    """Run the command-line data pipeline."""
-    args = parse_args()
-
-    if args.verbose:
-        logger.setLevel(logging.DEBUG)
+    """Main pipeline function."""
+    args = parse_arguments()
+    setup_logging(args.verbose)
 
     logger.debug(
-        "Arguments parsed: input=%s, output=%s format=%s",
+        "Arguments parsed: input=%s, output=%s, format=%s",
         args.input,
         args.output,
         args.format,
