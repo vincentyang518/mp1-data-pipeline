@@ -8,7 +8,6 @@ import pandas as pd
 import yaml
 
 
-# Use the logging configuration from pipeline.py.
 logger = logging.getLogger(__name__)
 
 
